@@ -1,0 +1,26 @@
+{
+  "name": "nodejs_practice",
+  "version": "1.0.0",
+  "description": "nodejs practice by course",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlekseyPn/nodejs_practice.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "Aleksey P<aleksfers@icloud.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlekseyPn/nodejs_practice/issues"
+  },
+  "homepage": "https://github.com/AlekseyPn/nodejs_practice#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
