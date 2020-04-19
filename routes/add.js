@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
 
 router.post("/", async (req, res) => {
   const { body } = req;
-  const course = new Course(body);
+  const course = new Course({...body, userId: req.user});
   try {
     await course.save();
     res.redirect("/courses");
