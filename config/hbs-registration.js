@@ -4,8 +4,15 @@ module.exports = {
   registration(app) {
     const hbs = exhbs.create({
       defaultLayout: "main",
-      extname: "hbs"
+      extname: "hbs",
     });
+
+    // hack for mongoose object
+    hbs._renderTemplate = function (template, context, options) {
+      options.allowProtoMethodsByDefault = true;
+      options.allowProtoPropertiesByDefault = true;
+      return template(context, options);
+    };
 
     app.engine("hbs", hbs.engine);
     app.set("view engine", "hbs");

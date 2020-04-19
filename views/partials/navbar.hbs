@@ -21,10 +21,16 @@
         <a href="/add">Add course</a>
       </li>
       <li
-        {{#if isCard}}
+        {{#if isCart}}
         class="active"
         {{/if}}>
-        <a href="/card">Card</a>
+        <a href="/cart">Cart</a>
+      </li>
+      <li
+        {{#if isOrder}}
+        class="active"
+        {{/if}}>
+        <a href="/orders">Orders</a>
       </li>
     </ul>
   </div>

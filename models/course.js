@@ -1,6 +1,6 @@
 const {Schema, model} = require("mongoose");
 
-const course = new Schema({
+const courseSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -11,8 +11,21 @@ const course = new Schema({
   },
   img: {
     type: String,
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    alias: "user",
   }
 });
 
+courseSchema.method("toClient", function () {
+  const course = this.toObject();
 
-module.exports = model("Course", course);
+  course.id = course._id;
+  delete course._id;
+
+  return course;
+})
+
+module.exports = model("Course", courseSchema);
