@@ -1,15 +1,17 @@
 const { Router } = require("express");
 const Course = require("../models/course");
+const auth = require("../middleware/auth");
+
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", auth, (req, res) => {
   res.render("add", {
     title: "Add course",
     isAdd: true,
   })
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { body } = req;
   const course = new Course({...body, userId: req.user});
   try {
