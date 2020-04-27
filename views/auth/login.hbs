@@ -19,7 +19,7 @@
           <label for="password">Password</label>
           <span class="helper-text" data-error="Enter password"></span>
         </div>
-
+        <input type="hidden" name="_csrf" value="{{csrf}}">
         <button class="btn btn-primary" type="submit">Sign in</button>
       </form>
     </div>
@@ -32,6 +32,11 @@
           <span class="helper-text" data-error="Enter Email"></span>
         </div>
         <div class="input-field">
+          <input name="name" id="name" type="text" class="validate" required>
+          <label for="name">Your name</label>
+          <span class="helper-text" data-error="Enter your name"></span>
+        </div>
+        <div class="input-field">
           <input name="password" id="new-password" type="password" class="validate" required>
           <label for="new-password">Password</label>
           <span class="helper-text" data-error="Enter password"></span>
@@ -41,7 +46,7 @@
           <label for="confirm">Password confirm</label>
           <span class="helper-text" data-error="Confirm password"></span>
         </div>
-
+        <input type="hidden" name="_csrf" value="{{csrf}}">
         <button class="btn btn-primary" type="submit">Register</button>
       </form>
 

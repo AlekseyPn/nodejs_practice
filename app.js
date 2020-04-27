@@ -1,28 +1,25 @@
 require("dotenv").config();
+const path = require("path");
 const express = require("express");
 const session = require("express-session");
+const MongoStore = require("connect-mongodb-session")(session);
+const csurf = require("csurf");
 const homeRoutes = require("./routes/home");
 const addRoutes = require("./routes/add");
 const coursesRoutes = require("./routes/courses");
 const cartRoutes = require("./routes/cart");
 const ordersRoutes = require("./routes/orders");
 const authRoutes = require("./routes/auth");
-const path = require("path");
 const db = require("./config/database");
-const User = require("./models/user");
 const varMiddleware = require("./middleware/variables");
+const userMiddleware = require("./middleware/user");
 
 const app = express();
 require("./config/hbs-registration").registration(app);
 
-app.use(async (req, res, next) => {
-  try {
-    const user = await User.findById("5e9c2793eeef298ada9f7756");
-    req.user = user;
-    next();
-  } catch (e) {
-    console.log(e)
-  }
+const store = new MongoStore({
+  collection: "sessions",
+  uri: db.MONGODB_URI,
 })
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -31,8 +28,11 @@ app.use(session({
   secret: "secret Key Value",
   resave: false,
   saveUninitialized: false,
+  store,
 }));
+app.use(csurf());
 app.use(varMiddleware);
+app.use(userMiddleware);
 app.use("/", homeRoutes);
 app.use("/add", addRoutes);
 app.use("/courses", coursesRoutes);
