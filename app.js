@@ -3,7 +3,8 @@ const path = require("path");
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
-const csurf = require("csurf");
+const csrf = require("csurf");
+const flash = require("connect-flash");
 const homeRoutes = require("./routes/home");
 const addRoutes = require("./routes/add");
 const coursesRoutes = require("./routes/courses");
@@ -30,7 +31,8 @@ app.use(session({
   saveUninitialized: false,
   store,
 }));
-app.use(csurf());
+app.use(csrf());
+app.use(flash());
 app.use(varMiddleware);
 app.use(userMiddleware);
 app.use("/", homeRoutes);
