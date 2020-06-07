@@ -23,6 +23,12 @@
           <a href="/add">Add course</a>
         </li>
         <li
+          {{#if isProfile}}
+          class="active"
+          {{/if}}>
+          <a href="/profile">Profile</a>
+        </li>
+        <li
           {{#if isCart}}
           class="active"
           {{/if}}>
