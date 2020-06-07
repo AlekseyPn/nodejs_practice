@@ -2,9 +2,12 @@ const {Router} = require("express");
 const bcrypt = require("bcryptjs");
 const sgMail = require('@sendgrid/mail');
 const crypto = require("crypto");
+const {validationResult} = require("express-validator");
 const User = require("../models/user");
 const regEmail = require("../emails/registration");
 const resetEmail = require("../emails/reset");
+const {loginValidators} = require("../utils/validators");
+const {registerValidators} = require("../utils/validators");
 
 const router = Router();
 
@@ -24,27 +27,30 @@ router.get("/logout", async (req, res) => {
   });
 })
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginValidators, async (req, res) => {
   try {
     const {email, password} = req.body;
-    const candidate = await User.findOne({email});
-    if (candidate) {
-      const areSame = await bcrypt.compare(password, candidate.password);
-      if (areSame) {
-        req.session.user = candidate;
-        req.session.isAuthenticated = true;
-        req.session.save(err => {
-          if (err) {
-            throw err
-          }
-          res.redirect("/");
-        })
-      } else {
-        req.flash("loginError", "Password is incorrect");
-        res.redirect("/auth/login#login");
-      }
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const [error] = errors.array();
+      req.flash('registerError', error.msg);
+      return res.status(422).redirect("/auth/login#login");
+    }
+
+    const user = await User.findOne({email});
+    const areSame = await bcrypt.compare(password, user.password);
+    if (areSame) {
+      req.session.user = user;
+      req.session.isAuthenticated = true;
+      req.session.save(err => {
+        if (err) {
+          throw err
+        }
+        res.redirect("/");
+      })
     } else {
-      req.flash("loginError", "That user does't exist");
+      req.flash("loginError", "User with such email or password does not exist");
       res.redirect("/auth/login#login");
     }
   } catch (e) {
@@ -52,22 +58,25 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/register", async (req, res) => {
+router.post("/register", registerValidators, async (req, res) => {
   try {
-    const {email, password, repeat, name} = req.body;
-    const candidate = await User.findOne({email})
-    if (candidate) {
-      req.flash("registerError", "User with entered email is exist");
-      res.redirect("/auth/login#register");
-    } else {
-      const hashPassword = await bcrypt.hash(password, 10)
-      const user = new User({email, name, password: hashPassword, cart: {items: []}});
-      await user.save();
-      res.redirect("/auth/login#login");
-      await sgMail.send(regEmail(email));
+    const {email, password, name} = req.body;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const [error] = errors.array();
+      req.flash('registerError', error.msg);
+      return res.status(422).redirect("/auth/login#register");
     }
+
+    const hashPassword = await bcrypt.hash(password, 10)
+    const user = new User({email, name, password: hashPassword, cart: {items: []}});
+    await user.save();
+    res.redirect("/auth/login#login");
+    await sgMail.send(regEmail(email));
   } catch (e) {
-    console.log(e.response.body);
+    console.log(e);
   }
 })
 

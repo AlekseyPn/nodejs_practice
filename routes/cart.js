@@ -6,7 +6,7 @@ const router = Router();
 
 function mapCartItems(cart) {
   return cart.items.map(c => ({
-    ...c.course.toObject(),
+    ...c.courseId.toObject(),
     id: c.course.id,
     count: c.count,
   }))
@@ -23,9 +23,13 @@ router.post("/add", auth, async (req, res) => {
 });
 
 router.get("/", auth, async (req, res) => {
-  const user = await req.user.populate("cart.items.courseId").execPopulate();
-
-  const courses = mapCartItems(user.cart)
+  let courses = []
+  try {
+    const user = await req.user.populate("cart.items.courseId").execPopulate();
+    courses = mapCartItems(user.cart)
+  } catch (e) {
+    courses = []
+  }
 
   res.render("cart", {
     title: "Cart",

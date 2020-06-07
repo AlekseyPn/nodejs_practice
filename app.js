@@ -11,10 +11,13 @@ const addRoutes = require("./routes/add");
 const coursesRoutes = require("./routes/courses");
 const cartRoutes = require("./routes/cart");
 const ordersRoutes = require("./routes/orders");
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/auth")
+const profileRoutes = require("./routes/profile");
 const db = require("./config/database");
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
+const errorHandler = require("./middleware/error");
+const fileMiddleware = require("./middleware/file");
 const keys = require("./keys");
 
 const app = express();
@@ -27,6 +30,7 @@ const store = new MongoStore({
 })
 
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(express.urlencoded({extended: true}));
 app.use(session({
   secret: keys.SESSION_SECRET,
@@ -34,6 +38,7 @@ app.use(session({
   saveUninitialized: false,
   store,
 }));
+app.use(fileMiddleware.single("avatar"));
 app.use(csrf());
 app.use(flash());
 app.use(varMiddleware);
@@ -44,6 +49,8 @@ app.use("/courses", coursesRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/auth", authRoutes);
+app.use("/profile", profileRoutes);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
 

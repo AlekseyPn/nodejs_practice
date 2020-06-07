@@ -28,7 +28,8 @@ const userSchema = new Schema({
         alias: "course",
       }
     }]
-  }
+  },
+  avatarUrl: String,
 })
 
 userSchema.methods.addToCart = function (course) {
