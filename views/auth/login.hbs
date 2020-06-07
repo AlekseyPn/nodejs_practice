@@ -10,6 +10,9 @@
       {{#if loginError}}
         <p class="alert">{{loginError}}</p>
       {{/if}}
+      {{#if success}}
+        <p class="success">{{success}}</p>
+      {{/if}}
       <h1>Sign in</h1>
       <form action="/auth/login" method="POST">
         <div class="input-field">
@@ -23,6 +26,9 @@
           <span class="helper-text" data-error="Enter password"></span>
         </div>
         <input type="hidden" name="_csrf" value="{{csrf}}">
+        <p>
+          <a href="/auth/reset">Forgot password?</a>
+        </p>
         <button class="btn btn-primary" type="submit">Sign in</button>
       </form>
     </div>

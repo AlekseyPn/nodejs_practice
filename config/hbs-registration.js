@@ -5,6 +5,7 @@ module.exports = {
     const hbs = exhbs.create({
       defaultLayout: "main",
       extname: "hbs",
+      helpers: require("../utils/hbs-helpers"),
     });
 
     // hack for mongoose object

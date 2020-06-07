@@ -1,35 +1,37 @@
-const { Schema, model } = require("mongoose")
+const {Schema, model} = require("mongoose")
 
 const userSchema = new Schema({
- email: {
-   type: String,
-   required: true,
- },
- name: {
-   type: String,
- },
- password: {
-   type: String,
-   required: true,
- },
- cart: {
-   items: [{
-     count: {
-       type: Number,
-       required: true,
-       default: 1,
-     },
-     courseId: {
-       type: Schema.Types.ObjectId,
-       ref: "Course",
-       required: true,
-       alias: "course",
-     }
-   }]
- }
+  email: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  resetToken: String,
+  resetTokenExp: Date,
+  cart: {
+    items: [{
+      count: {
+        type: Number,
+        required: true,
+        default: 1,
+      },
+      courseId: {
+        type: Schema.Types.ObjectId,
+        ref: "Course",
+        required: true,
+        alias: "course",
+      }
+    }]
+  }
 })
 
-userSchema.methods.addToCart = function(course) {
+userSchema.methods.addToCart = function (course) {
   const items = [...this.cart.items];
   const courseIdx = items.findIndex(c => c.courseId.toString() === course._id.toString());
   if (courseIdx >= 0) {
@@ -37,11 +39,11 @@ userSchema.methods.addToCart = function(course) {
   } else {
     items.push({count: 1, courseId: course._id})
   }
-  this.cart = { items };
+  this.cart = {items};
   return this.save()
 };
 
-userSchema.methods.removeFromCart = function(courseId) {
+userSchema.methods.removeFromCart = function (courseId) {
   let items = [...this.cart.items];
 
   const courseIdx = items.findIndex(c => c.courseId.toString() === courseId.toString());
@@ -52,11 +54,11 @@ userSchema.methods.removeFromCart = function(courseId) {
     items = items.filter(c => c.courseId.toString() !== courseId.toString());
   }
 
-  this.cart = { items };
+  this.cart = {items};
   return this.save();
 }
 
-userSchema.methods.clearCart = function() {
+userSchema.methods.clearCart = function () {
   this.cart.items = [];
 
   return this.save();
